@@ -1,32 +1,46 @@
 package com.example.lostandfound;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.lostandfound.room.LostObjectDao;
 import com.example.lostandfound.room.LostObjectData;
-import com.example.lostandfound.room.LostObjectDatabase;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import android.location.Location;
+
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+
+import java.util.Arrays;
+
 
 public class MakeNewAdvert extends AppCompatActivity {
 
-    Button buttonSaveAdvert;
+    Button buttonSaveAdvert, buttonSetCurrentLocation;
     EditText editName, editPhone, editDescription, editDate, editLocation;
     CheckBox checkboxLost, checkboxFound;
     DatabaseHelper databaseHelper;
     String objectType;
+    FusedLocationProviderClient fusedLocationClient;
+    int REQUEST_LOCATION_PERMISSION = 1;
 
 
     @Override
@@ -35,6 +49,7 @@ public class MakeNewAdvert extends AppCompatActivity {
         setContentView(R.layout.activity_make_new_advert);
 
         buttonSaveAdvert = findViewById(R.id.buttonSubmitAdvert);
+        buttonSetCurrentLocation = findViewById(R.id.buttonAddCurrentLocation);
 
         editName = findViewById(R.id.editTextName);
         editPhone = findViewById(R.id.editTextPhone);
@@ -47,6 +62,44 @@ public class MakeNewAdvert extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        //initializes places api with the apikey
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), "AIzaSyC7eM_5i_6RkfforZwMHzOp5G9m67_2dXo");
+        }
+
+        //creates the autocomplete fragment used for getting location
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        //set the fields that are retrieved when autocompleting to name, id and lat/lng
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+        //listens for when an item is selected
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onError(@NonNull Status status) {
+
+            }
+
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                //takes the latlng of the selected option and strips it
+                LatLng autoLocation = place.getLatLng();
+                String autoLocationString = autoLocation.toString();
+                String autoLocationStripped1 = autoLocationString.replaceFirst("lat/lng: \\(", "");
+                String autoLocationStripped2 = autoLocationStripped1.substring(0, autoLocationStripped1.length()-1);
+                //fills the location text box with the lat,long
+                editLocation.setText(autoLocationStripped2);
+            }
+        });
+
+
+        buttonSetCurrentLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCurrentLocation();
+            }
+        });
 
         buttonSaveAdvert.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +160,41 @@ public class MakeNewAdvert extends AppCompatActivity {
                 editLocation.setText("");
             }
         });
+    }
+    public void getCurrentLocation(){
+        //checks for permissions have been granted, if not, request the permissions
+        if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        } else {
+            //gets the most recent location data on the device
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null){
+                        //creates a new LatLng object that stores the location
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
+                        //Strips the latLng result into latitude,longitude for easier retrieval later on
+                        String latLngString = latLng.toString();
+                        String latLngStripped1 = latLngString.replaceFirst("lat/lng: \\(", "");
+                        String latLngStripped2 = latLngStripped1.substring(0, latLngStripped1.length()-1);
 
+                        //sets the text box to the latitude and longitude
+                        editLocation.setText(latLngStripped2);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation();
+            }
+        }
     }
 }

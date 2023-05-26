@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
                 //starts the advert list activity to show all listings
                 Intent intentToAdvertList = new Intent(MainActivity.this, ShowAdverts.class);
                 startActivity(intentToAdvertList);
-                finish();
+
             }
         });
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 //starts the new advert activity to create a new listing
                 Intent intentToNewAdvert = new Intent(MainActivity.this, MakeNewAdvert.class);
                 startActivity(intentToNewAdvert);
-                finish();
+
             }
         });
 
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 //starts a new activity that will show the map with all the lost items
                 Intent intentToShowMap = new Intent(MainActivity.this, ShowMap.class);
                 startActivity(intentToShowMap);
-                finish();
+
             }
         });
     }
