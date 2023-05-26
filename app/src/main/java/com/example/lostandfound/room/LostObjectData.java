@@ -10,18 +10,14 @@ public class LostObjectData {
 
     @PrimaryKey(autoGenerate = true)
     int id;
-
     String name;
-
     String phone;
-
     String description;
-
     String date;
-
     String location;
     String type;
 
+    //creates object type and assigns all given values to itself, used for retrieving the appropriate data for any specific item
     public LostObjectData(int id, String name, String phone, String description, String date, String location, String type) {
         this.id = id;
         this.name = name;
@@ -37,6 +33,7 @@ public class LostObjectData {
 
     }
 
+    //getters and setters to retrieve and set any specific data for any lost object, instead of interacting with the item directly
     public int getId() {
         return id;
     }

@@ -26,7 +26,6 @@ public class MakeNewAdvert extends AppCompatActivity {
     EditText editName, editPhone, editDescription, editDate, editLocation;
     CheckBox checkboxLost, checkboxFound;
     DatabaseHelper databaseHelper;
-
     String objectType;
 
 
@@ -94,6 +93,7 @@ public class MakeNewAdvert extends AppCompatActivity {
                 LostObjectData lostData = new LostObjectData(0, editName.getText().toString(), editPhone.getText().toString(), editDescription.getText().toString(),
                         editDate.getText().toString(), editLocation.getText().toString(), objectType);
 
+                //insert item into the database
                 databaseHelper.insertItem(lostData);
 
                 //make toast indicating that it was successful and an item was added

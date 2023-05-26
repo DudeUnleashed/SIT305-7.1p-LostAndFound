@@ -16,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.816" />
+        app:layout_constraintVertical_bias="0.749" />
 
     <Button
         android:id="@+id/buttonShowAdverts"
@@ -28,5 +28,17 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.54" />
+        app:layout_constraintVertical_bias="0.461" />
+
+    <Button
+        android:id="@+id/buttonShowOnMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show On Map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonShowAdverts"
+        app:layout_constraintVertical_bias="0.175" />
 </androidx.constraintlayout.widget.ConstraintLayout>
