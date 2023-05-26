@@ -66,7 +66,7 @@ public class MakeNewAdvert extends AppCompatActivity {
 
         //initializes places api with the apikey
         if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), "AIzaSyC7eM_5i_6RkfforZwMHzOp5G9m67_2dXo");
+            Places.initialize(getApplicationContext(), "apikey");
         }
 
         //creates the autocomplete fragment used for getting location

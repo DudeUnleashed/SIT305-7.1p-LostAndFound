@@ -18,7 +18,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC7eM_5i_6RkfforZwMHzOp5G9m67_2dXo" />
+            android:value="apikey" />
 
         <activity
             android:name=".ShowMap"
